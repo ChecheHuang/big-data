@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select'
 import useUpdateEffect from '@/hooks/useUpdateEffect'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as z from 'zod'

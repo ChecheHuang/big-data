@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import useUpdateEffect from '@/hooks/useUpdateEffect'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
@@ -52,7 +53,7 @@ export function SelectForm() {
     if (!county) return []
     return areaData[county as keyof typeof areaData]
   }, [county])
-  useEffect(() => {
+  useUpdateEffect(() => {
     setValue('town', '')
   }, [county])
 
@@ -102,9 +103,9 @@ export function SelectForm() {
           disabled={!county}
           options={townOptions}
           label="區"
-          placeholder="請先選擇縣/市"
-          commandPlaceholder="尋找縣市"
-          commandEmpty="沒有該縣市"
+          placeholder={!county ? '請先選擇縣/市' : '選擇區'}
+          commandPlaceholder="尋找區"
+          commandEmpty="沒有該區"
           className="w-full md:w-40"
           optionsClassName="w-[95vw] p-0 md:w-40"
         />

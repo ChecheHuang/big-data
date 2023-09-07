@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown, X } from 'lucide-react'
 import { useState } from 'react'
 import { FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-form'
 
@@ -48,6 +48,8 @@ function AutoCompleteSelect<T extends FieldValues>({
   disabled = false,
 }: AutoCompleteSelectProps<T>) {
   const [open, setOpen] = useState(false)
+  const { watch, setValue } = form
+  const value = watch(name)
 
   return (
     <FormField
@@ -60,20 +62,32 @@ function AutoCompleteSelect<T extends FieldValues>({
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <FormControl>
-                  <Button
-                    disabled={disabled}
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                      'w-full justify-between rounded-md border-2  border-primary',
-                      !field.value && 'text-muted-foreground',
-                    )}
-                  >
-                    {field.value
-                      ? options.find((value) => value === field.value)
-                      : placeholder}
-                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
+                  <div className="">
+                    <Button
+                      type="button"
+                      disabled={disabled}
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        'w-full justify-between rounded-md border-2  border-primary',
+                        !field.value && 'text-muted-foreground',
+                      )}
+                    >
+                      {field.value
+                        ? options.find((value) => value === field.value)
+                        : placeholder}
+
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                    {value ? (
+                      <X
+                        onClick={() => {
+                          setValue(name, '' as PathValue<T, Path<T>>)
+                        }}
+                        className=" absolute right-10  top-1/2 h-4 w-4   -translate-y-1/2 transform cursor-pointer"
+                      />
+                    ) : null}
+                  </div>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className={optionsClassName}>
@@ -86,7 +100,7 @@ function AutoCompleteSelect<T extends FieldValues>({
                         value={value}
                         key={value}
                         onSelect={() => {
-                          form.setValue(name, value as PathValue<T, Path<T>>)
+                          setValue(name, value as PathValue<T, Path<T>>)
                           setOpen(false)
                         }}
                       >

@@ -13,7 +13,6 @@
     "route": "node createClientRouter.js",
     "cm": "git-cz",
     "cma": "git add . && git-cz",
-    "pre-ghp": "npm run build",
     "ghp": "gh-pages -d dist"
   },
   "dependencies": {

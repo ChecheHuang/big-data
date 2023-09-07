@@ -1,3 +1,4 @@
+import AutoCompleteSelect from './AutoCompleteSelect'
 import areaData from './areaData.json'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,10 +27,12 @@ const FormSchema = z.object({
   town: z.string(),
 })
 
+type FormType = z.infer<typeof FormSchema>
+
 export function SelectForm() {
   const navigate = useNavigate()
   const params = useParams()
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<FormType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       year: params.year || '110',
@@ -39,7 +42,7 @@ export function SelectForm() {
   })
   const { watch, setValue } = form
 
-  function onSubmit({ year, county, town }: z.infer<typeof FormSchema>) {
+  function onSubmit({ year, county, town }: FormType) {
     navigate(`/${year}/${county}/${town}`)
   }
   const yearOptions = ['110', '109', '108', '107', '106']
@@ -52,6 +55,7 @@ export function SelectForm() {
   useEffect(() => {
     setValue('town', '')
   }, [county])
+
   return (
     <Form {...form}>
       <form
@@ -66,7 +70,7 @@ export function SelectForm() {
               <FormLabel>年分</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-md border-2  border-primary ">
                     <SelectValue placeholder="選擇年分" />
                   </SelectTrigger>
                 </FormControl>
@@ -81,55 +85,28 @@ export function SelectForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
+        <AutoCompleteSelect<FormType>
+          form={form}
           name="county"
-          render={({ field }) => (
-            <FormItem className="w-full md:w-40">
-              <FormLabel>縣/市</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="請選擇縣/市" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="max-h-40 overflow-auto">
-                  {countyOptions.map((value) => (
-                    <SelectItem key={value} value={value}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
+          options={countyOptions}
+          label="縣/市"
+          placeholder="選擇縣市"
+          commandPlaceholder="尋找縣市"
+          commandEmpty="沒有該縣市"
+          className="w-full md:w-40"
+          optionsClassName="w-[95vw] p-0 md:w-40"
         />
-        <FormField
-          control={form.control}
+        <AutoCompleteSelect<FormType>
+          form={form}
           name="town"
-          render={({ field }) => (
-            <FormItem className="w-full md:w-40">
-              <FormLabel>區</FormLabel>
-              <Select
-                disabled={!county}
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="請先選擇縣/市" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="max-h-40 overflow-auto">
-                  {townOptions.map((value) => (
-                    <SelectItem key={value} value={value}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
+          disabled={!county}
+          options={townOptions}
+          label="區"
+          placeholder="請先選擇縣/市"
+          commandPlaceholder="尋找縣市"
+          commandEmpty="沒有該縣市"
+          className="w-full md:w-40"
+          optionsClassName="w-[95vw] p-0 md:w-40"
         />
         <Button
           className="w-full md:w-auto"
